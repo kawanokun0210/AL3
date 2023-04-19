@@ -1,13 +1,18 @@
 #include "Player.h"
 #include <cassert>
 
-Player Initialize(Model* model, uint32_t textureHandele) {
+
+Player::Player() {}
+
+Player::~Player() {}
+
+void Player::Initialize(Model* model, uint32_t textureHandele) {
 
 	//NULLポインタチェック
 	assert(model);
 	
 };
 
-Player Update(){};
+void Player::Update(){};
 
-Player Draw(){};
+void Player::Draw(){};
