@@ -2,17 +2,27 @@
 #include <cassert>
 
 
-Player::Player() {}
+void Player::Initialize(Model* model, uint32_t textureHandle) {
 
-Player::~Player() {}
-
-void Player::Initialize(Model* model, uint32_t textureHandele) {
-
-	//NULLポインタチェック
+	//NULL繝昴う繝ｳ繧ｿ繝√ぉ繝�繧ｯ
 	assert(model);
 	
+	model_ = model;
+	textureHandle_ = textureHandle;
+
+	worldTransform_.Initialize();
+
+
 };
 
-void Player::Update(){};
+void Player::Update() {
+	
+	worldTransform_.TransferMatrix(); 
 
-void Player::Draw(){};
+};
+
+void Player::Draw(ViewProjection viewProjection){
+
+	model_->Draw(worldTransform_, viewProjection, textureHandle_);
+
+};
