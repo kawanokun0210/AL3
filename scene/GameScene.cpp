@@ -55,8 +55,6 @@ void GameScene::Update() {
 		viewProjection_.UpdateMatrix();
 	}
 
-
-
 	debugCamera_->Update();
 }
 

@@ -54,7 +54,7 @@ void Player::Update() {
 
 	// ImGuiスライダー
 	ImGui::Begin("PlayerDebug");
-	ImGui::Text("DebugCamera Toggle : 0");
+	ImGui::Text("DebugCamera Toggle : SPACE");
 	ImGui::SliderFloat3("Positions", inputFloat, -20.0f, 20.0f);
 	// ImGui終わり
 	ImGui::End();
