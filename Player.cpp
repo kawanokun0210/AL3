@@ -1,8 +1,5 @@
 #include "Player.h"
 #include "newMath.h"
-#include "ImGuiManager.h"
-#include <cassert>
-#include <cmath>
 
 void Player::Initialize(Model* model, uint32_t textureHandle) {
 
@@ -20,58 +17,57 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 
 void Player::Update() {
 
-	Matrix4x4 scaleMatrix = MakeScaleMatrix(worldTransform_.scale_);
-
-	Matrix4x4 rotateMatrixX = MakeRotateXMatrix(worldTransform_.rotation_.x);
-	Matrix4x4 rotateMatrixY = MakeRotateYMatrix(worldTransform_.rotation_.y);
-	Matrix4x4 rotateMatrixZ = MakeRotateZMatrix(worldTransform_.rotation_.z);
-	Matrix4x4 rotateMatrixXYZ = Multiply(Multiply(rotateMatrixX, rotateMatrixY), rotateMatrixZ);
-
-	Matrix4x4 translateMatrix = MakeTranslateMatrix(worldTransform_.translation_);
-
-	//キャラ移動
+	worldTransform_.TransferMatrix();
+	// キャラクターの移動ベクトル
 	Vector3 move = {0, 0, 0};
 
-	//キャラ移動の速さ
+	// キャラクターの移動速さ
 	const float kCharacterSpeed = 0.2f;
 
-	//押した方向で移動ベクトルを変更
+	// 押した方向で移動ベクトルを変更(左右)
 	if (input_->PushKey(DIK_LEFT)) {
 		move.x -= kCharacterSpeed;
+		inputFloat[0] = worldTransform_.translation_.x;
 	} else if (input_->PushKey(DIK_RIGHT)) {
 		move.x += kCharacterSpeed;
+		inputFloat[0] = worldTransform_.translation_.x;
 	}
 
-	//押した方向で移動ベクトルを変更
-	if (input_->PushKey(DIK_UP)) {
-		move.y += kCharacterSpeed;
-	} else if (input_->PushKey(DIK_DOWN)) {
+	// 押した方向で移動ベクトルを変更(上下)
+	if (input_->PushKey(DIK_DOWN)) {
 		move.y -= kCharacterSpeed;
+		inputFloat[1] = worldTransform_.translation_.y;
+	} else if (input_->PushKey(DIK_UP)) {
+		move.y += kCharacterSpeed;
+		inputFloat[1] = worldTransform_.translation_.y;
 	}
 
-	worldTransform_.translation_ = TransformCord(move, translateMatrix);
-	
+	// ImGui加算用
+	worldTransform_.translation_.x = inputFloat[0];
+	worldTransform_.translation_.y = inputFloat[1];
 
-	float pos[3]{};
-	pos[0] = worldTransform_.translation_.x;
-	pos[1] = worldTransform_.translation_.y;
-	pos[2] = worldTransform_.translation_.z;
-
-	ImGui::Begin("");
-	ImGui::SliderFloat3("Player", pos, -500.0f, 500.0f);
-	worldTransform_.translation_.x = pos[0];
-	worldTransform_.translation_.y = pos[1];
-	worldTransform_.translation_.z = pos[2];
-	ImGui::End();
-
-	worldTransform_.translation_.x += move.x;
-	worldTransform_.translation_.y += move.y;
-
+	// ベクターの加算
+	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
+	// アフィン変換行列の作成
 	worldTransform_.matWorld_ = MakeAffineMatrix(
 	    worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 
-	worldTransform_.TransferMatrix(); 
+	// ImGuiスライダー
+	ImGui::Begin("PlayerDebug");
+	ImGui::Text("DebugCamera Toggle : 0");
+	ImGui::SliderFloat3("Positions", inputFloat, -20.0f, 20.0f);
+	// ImGui終わり
+	ImGui::End();
 
+	// 移動限界座標
+	const float kMoveLimitX = 34;
+	const float kMoveLimitY = 18;
+
+	// 範囲を超えない処理
+	worldTransform_.translation_.x = max(worldTransform_.translation_.x, -kMoveLimitX);
+	worldTransform_.translation_.x = min(worldTransform_.translation_.x, +kMoveLimitX);
+	worldTransform_.translation_.y = max(worldTransform_.translation_.y, -kMoveLimitY);
+	worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMoveLimitY);
 };
 
 void Player::Draw(ViewProjection viewProjection){

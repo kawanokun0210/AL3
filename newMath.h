@@ -1,10 +1,14 @@
 #pragma once
 #include <cmath>
 #include <cassert>
-#include "Model.h"
-#include "WorldTransform.h"
-#include "ViewProjection.h"
-#include "Input.h"
+
+Vector3 Add(const Vector3& v1, const Vector3& v2) {
+	Vector3 result;
+	result.x = v1.x + v2.x;
+	result.y = v1.y + v2.y;
+	result.z = v1.z + v2.z;
+	return result;
+}
 
 Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2) {
 	Matrix4x4 result{};
