@@ -1,6 +1,15 @@
 #include "Player.h"
 #include "newMath.h"
 
+void Player::Attack() {
+	if (input_->PushKey(DIK_RETURN)) {
+		PlayerBullet* newBullet = new PlayerBullet();
+		newBullet->Initialize(model_, worldTransform_.translation_);
+		//弾を登録
+		bullet_ = newBullet;
+	}
+}
+
 void Player::Initialize(Model* model, uint32_t textureHandle) {
 
 	//NULLポインタチェック
@@ -42,6 +51,15 @@ void Player::Update() {
 		inputFloat3[1] = worldTransform_.translation_.y;
 	}
 
+	const float kRotSpeed = 0.02f;
+
+	//押した方向でベクトル移動
+	if (input_->PushKey(DIK_A)) {
+		worldTransform_.rotation_.y -= kRotSpeed;
+	} else if (input_->PushKey(DIK_D)) {
+		worldTransform_.rotation_.y += kRotSpeed; 
+	}
+
 	// ImGui加算用
 	worldTransform_.translation_.x = inputFloat3[0];
 	worldTransform_.translation_.y = inputFloat3[1];
@@ -68,10 +86,20 @@ void Player::Update() {
 	worldTransform_.translation_.x = min(worldTransform_.translation_.x, +kMoveLimitX);
 	worldTransform_.translation_.y = max(worldTransform_.translation_.y, -kMoveLimitY);
 	worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMoveLimitY);
+
+	Attack();
+	if (bullet_) {
+		bullet_->Update();
+	}
+
 };
 
 void Player::Draw(ViewProjection viewProjection){
 
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
+	//弾描画
+	if (bullet_) {
+		bullet_->Draw(viewProjection);
+	}
 
 };

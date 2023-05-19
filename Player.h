@@ -6,6 +6,7 @@
 #include "ViewProjection.h"
 #include "Input.h"
 #include "ImGuiManager.h"
+#include "PlayerBullet.h"
 
 
 
@@ -27,6 +28,9 @@ public:
 	/// </summary>
 	void Draw(ViewProjection viewProjection);
 
+	//攻撃
+	void Attack();
+
 private:
 
 	//ワールド変換データ
@@ -39,5 +43,7 @@ private:
 	Input* input_ = nullptr;
 	//ImGuiで値を入力する
 	float inputFloat3[3] = {0, 0, 0};
+	//弾
+	PlayerBullet* bullet_ = nullptr;
 
 };
