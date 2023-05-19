@@ -7,6 +7,7 @@
 #include "Input.h"
 #include "ImGuiManager.h"
 #include "PlayerBullet.h"
+#include <list>
 
 
 
@@ -31,6 +32,9 @@ public:
 	//攻撃
 	void Attack();
 
+	//デストラクタ
+	~Player();
+
 private:
 
 	//ワールド変換データ
@@ -45,5 +49,7 @@ private:
 	float inputFloat3[3] = {0, 0, 0};
 	//弾
 	PlayerBullet* bullet_ = nullptr;
+	//弾
+	std::list<PlayerBullet*> bullets_;
 
 };
