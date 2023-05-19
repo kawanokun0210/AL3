@@ -9,11 +9,21 @@ Player::~Player() {
 
 void Player::Attack() {
 	if (input_->PushKey(DIK_RETURN)) {
-		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, worldTransform_.translation_);
-		//弾を登録
-		bullet_ = newBullet;
-		bullets_.push_back(newBullet);
+		if (count == 0) {
+			//弾の速度
+			const float kBulletSpeed = 1.0f;
+			Vector3 velocity(0, 0, kBulletSpeed);
+			velocity = TransformNormal(velocity, worldTransform_.matWorld_);
+
+			PlayerBullet* newBullet = new PlayerBullet();
+			newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+			// 弾を登録
+			//bullet_ = newBullet;
+			bullets_.push_back(newBullet);
+			count++;
+		}
+	} else {
+		count = 0;
 	}
 }
 
@@ -32,6 +42,15 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 };
 
 void Player::Update() {
+
+	//デスフラグの立った球を削除
+	bullets_.remove_if([](PlayerBullet* bullet) {
+		if (bullet->IsDead()) {
+			delete bullet;
+			return true;
+		}
+		return false;
+	});
 
 	worldTransform_.TransferMatrix();
 	// キャラクターの移動ベクトル
@@ -95,9 +114,9 @@ void Player::Update() {
 	worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMoveLimitY);
 
 	Attack();
-	if (bullet_) {
+	/* if (bullet_) {
 		bullet_->Update();
-	}
+	}*/
 
 	//弾更新
 	for (PlayerBullet* bullet : bullets_) {
@@ -110,9 +129,9 @@ void Player::Draw(ViewProjection viewProjection){
 
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 	//弾描画
-	if (bullet_) {
+	/* if (bullet_) {
 		bullet_->Draw(viewProjection);
-	}
+	}*/
 
 	//弾の描画
 	for (PlayerBullet* bullet : bullets_) {
