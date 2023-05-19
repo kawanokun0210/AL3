@@ -27,24 +27,24 @@ void Player::Update() {
 	// 押した方向で移動ベクトルを変更(左右)
 	if (input_->PushKey(DIK_LEFT)) {
 		move.x -= kCharacterSpeed;
-		inputFloat[0] = worldTransform_.translation_.x;
+		inputFloat3[0] = worldTransform_.translation_.x;
 	} else if (input_->PushKey(DIK_RIGHT)) {
 		move.x += kCharacterSpeed;
-		inputFloat[0] = worldTransform_.translation_.x;
+		inputFloat3[0] = worldTransform_.translation_.x;
 	}
 
 	// 押した方向で移動ベクトルを変更(上下)
 	if (input_->PushKey(DIK_DOWN)) {
 		move.y -= kCharacterSpeed;
-		inputFloat[1] = worldTransform_.translation_.y;
+		inputFloat3[1] = worldTransform_.translation_.y;
 	} else if (input_->PushKey(DIK_UP)) {
 		move.y += kCharacterSpeed;
-		inputFloat[1] = worldTransform_.translation_.y;
+		inputFloat3[1] = worldTransform_.translation_.y;
 	}
 
 	// ImGui加算用
-	worldTransform_.translation_.x = inputFloat[0];
-	worldTransform_.translation_.y = inputFloat[1];
+	worldTransform_.translation_.x = inputFloat3[0];
+	worldTransform_.translation_.y = inputFloat3[1];
 
 	// ベクターの加算
 	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
@@ -55,7 +55,7 @@ void Player::Update() {
 	// ImGuiスライダー
 	ImGui::Begin("PlayerDebug");
 	ImGui::Text("DebugCamera Toggle : SPACE");
-	ImGui::SliderFloat3("Positions", inputFloat, -20.0f, 20.0f);
+	ImGui::SliderFloat3("Positions", inputFloat3, -20.0f, 20.0f);
 	// ImGui終わり
 	ImGui::End();
 

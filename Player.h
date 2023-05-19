@@ -38,6 +38,6 @@ private:
 	//キーボード入力
 	Input* input_ = nullptr;
 	//ImGuiで値を入力する
-	float inputFloat[3] = {0, 0, 0};
+	float inputFloat3[3] = {0, 0, 0};
 
 };
