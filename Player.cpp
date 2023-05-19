@@ -1,4 +1,6 @@
 #include "Player.h"
+#include "newMath.h"
+#include "ImGuiManager.h"
 #include <cassert>
 #include <cmath>
 
@@ -16,77 +18,16 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 
 };
 
-Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2) {
-	Matrix4x4 result;
-	for (int x = 0; x < 4; x++) {
-		for (int y = 0; y < 4; y++) {
-			result.m[x][y] = m1.m[x][0] * m2.m[0][y] + m1.m[x][1] * m2.m[1][y] +
-			                 m1.m[x][2] * m2.m[2][y] + m1.m[x][3] * m2.m[3][y];
-		}
-	}
-}
-
-Matrix4x4 MakeRotateXMatrix(float radian) {
-	Matrix4x4 result;
-	result.m[0][0] = 1;
-	result.m[1][1] = std::cos(radian);
-	result.m[1][2] = std::sin(radian);
-	result.m[2][1] = std::sin(-radian);
-	result.m[2][2] = std::cos(radian);
-	result.m[3][3] = 1;
-	return result;
-}
-Matrix4x4 MakeRotateYMatrix(float radian) {
-	Matrix4x4 result;
-	result.m[0][0] = std::cos(radian);
-	result.m[1][1] = std::sin(-radian);
-	result.m[1][2] = 1;
-	result.m[2][1] = std::sin(radian);
-	result.m[2][2] = std::cos(radian);
-	result.m[3][3] = 1;
-	return result;
-}
-Matrix4x4 MakeRotateZMatrix(float radian) {
-	Matrix4x4 result;
-	result.m[0][0] = std::cos(radian);
-	result.m[1][1] = std::sin(-radian);
-	result.m[1][2] = std::sin(radian);
-	result.m[2][1] = std::cos(radian);
-	result.m[2][2] = 1;
-	result.m[3][3] = 1;
-	return result;
-}
-
-Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate) {
-	Matrix4x4 result;
-	Matrix4x4 rotateXYZMatrix = Multiply(MakeRotateXMatrix(rotate.x), Multiply(MakeRotateYMatrix(rotate.y),MakeRotateZMatrix(rotate.z)));
-
-	result.m[0][0] = rotateXYZMatrix.m[0][0] * scale.x;
-	result.m[0][1] = rotateXYZMatrix.m[0][1] * scale.x;
-	result.m[0][2] = rotateXYZMatrix.m[0][2] * scale.x;
-	result.m[0][3] = 0;
-
-	result.m[1][0] = rotateXYZMatrix.m[1][0] * scale.y;
-	result.m[1][1] = rotateXYZMatrix.m[1][1] * scale.y;
-	result.m[1][2] = rotateXYZMatrix.m[1][2] * scale.y;
-	result.m[1][3] = 0;
-
-	result.m[2][0] = rotateXYZMatrix.m[2][0] * scale.z;
-	result.m[2][1] = rotateXYZMatrix.m[2][1] * scale.z;
-	result.m[2][2] = rotateXYZMatrix.m[2][2] * scale.z;
-	result.m[2][3] = 0;
-
-	result.m[3][0] = translate.x;
-	result.m[3][1] = translate.y;
-	result.m[3][2] = translate.z;
-	result.m[3][3] = 1;
-
-	return result;
-}
-
 void Player::Update() {
-	
-	worldTransform_.TransferMatrix(); 
+
+	Matrix4x4 scaleMatrix = MakeScaleMatrix(worldTransform_.scale_);
+
+	Matrix4x4 rotateMatrixX = MakeRotateXMatrix(worldTransform_.rotation_.x);
+	Matrix4x4 rotateMatrixY = MakeRotateYMatrix(worldTransform_.rotation_.y);
+	Matrix4x4 rotateMatrixZ = MakeRotateZMatrix(worldTransform_.rotation_.z);
+	Matrix4x4 rotateMatrixXYZ = Multiply(Multiply(rotateMatrixZ, rotateMatrixX), rotateMatrixY);
+
+	Matrix4x4 translateMatrix = MakeTranslateMatrix(worldTransform_.translation_);
 
 	//キャラ移動
 	Vector3 move = {0, 0, 0};
@@ -103,12 +44,30 @@ void Player::Update() {
 
 	//押した方向で移動ベクトルを変更
 	if (input_->PushKey(DIK_UP)) {
-		move.y -= kCharacterSpeed;
-	} else if (input_->PushKey(DIK_DOWN)) {
 		move.y += kCharacterSpeed;
+	} else if (input_->PushKey(DIK_DOWN)) {
+		move.y -= kCharacterSpeed;
 	}
 
-	worldTransform_.translation_ = move;
+	float pos[3]{};
+	pos[0] = worldTransform_.translation_.x;
+	pos[1] = worldTransform_.translation_.y;
+	pos[2] = worldTransform_.translation_.z;
+
+	ImGui::Begin("");
+	ImGui::SliderFloat3("Player", pos, -500.0f, 500.0f);
+	worldTransform_.translation_.x = pos[0];
+	worldTransform_.translation_.y = pos[1];
+	worldTransform_.translation_.z = pos[2];
+	ImGui::End();
+
+	worldTransform_.translation_.x += move.x;
+	worldTransform_.translation_.y += move.y;
+
+	worldTransform_.matWorld_ = MakeAffineMatrix(
+	    worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
+
+	worldTransform_.TransferMatrix(); 
 
 };
 
