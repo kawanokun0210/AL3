@@ -25,7 +25,7 @@ void Player::Update() {
 	Matrix4x4 rotateMatrixX = MakeRotateXMatrix(worldTransform_.rotation_.x);
 	Matrix4x4 rotateMatrixY = MakeRotateYMatrix(worldTransform_.rotation_.y);
 	Matrix4x4 rotateMatrixZ = MakeRotateZMatrix(worldTransform_.rotation_.z);
-	Matrix4x4 rotateMatrixXYZ = Multiply(Multiply(rotateMatrixZ, rotateMatrixX), rotateMatrixY);
+	Matrix4x4 rotateMatrixXYZ = Multiply(Multiply(rotateMatrixX, rotateMatrixY), rotateMatrixZ);
 
 	Matrix4x4 translateMatrix = MakeTranslateMatrix(worldTransform_.translation_);
 
@@ -48,6 +48,9 @@ void Player::Update() {
 	} else if (input_->PushKey(DIK_DOWN)) {
 		move.y -= kCharacterSpeed;
 	}
+
+	worldTransform_.translation_ = TransformCord(move, translateMatrix);
+	
 
 	float pos[3]{};
 	pos[0] = worldTransform_.translation_.x;
