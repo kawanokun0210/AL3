@@ -38,10 +38,9 @@ void GameScene::Update() {
 	//自キャラの更新
 	player_->Update();
 
-#ifdef _DEBUG
-	if (input_->TriggerKey(DIK_0) && isDebugCameraActive_ == false) {
+	if (input_->TriggerKey(DIK_SPACE) && isDebugCameraActive_ == false) {
 		isDebugCameraActive_ = true;
-	} else if (input_->TriggerKey(DIK_0) && isDebugCameraActive_ == true) {
+	} else if (input_->TriggerKey(DIK_SPACE) && isDebugCameraActive_ == true) {
 		isDebugCameraActive_ = false;
 	}
 	// カメラの処理
@@ -55,7 +54,8 @@ void GameScene::Update() {
 		// ビュープロジェクション行列の更新と転送
 		viewProjection_.UpdateMatrix();
 	}
-#endif
+
+
 
 	debugCamera_->Update();
 }
