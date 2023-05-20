@@ -9,6 +9,7 @@ GameScene::~GameScene() {
 	delete model_;
 	delete player_;
 	delete debugCamera_;
+	delete enemy_;
 }
 
 void GameScene::Initialize() {
@@ -27,6 +28,11 @@ void GameScene::Initialize() {
 	player_ = new Player();
 	//自キャラの初期化
 	player_->Initialize(model_, textureHandle_);
+	//敵の生成
+	enemy_ = new Enemy;
+	Vector3 position = {0, 0, 30};
+	//敵初期化
+	enemy_->Initialize(model_, position);
 	//デバッグカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
 	//軸方向表示を有効にする
@@ -38,6 +44,8 @@ void GameScene::Initialize() {
 void GameScene::Update() {
 	//自キャラの更新
 	player_->Update();
+
+	enemy_->Update();
 
 #ifdef _DEBUG
 
@@ -91,6 +99,8 @@ void GameScene::Draw() {
 
 	player_->Draw(viewProjection_);
 	
+	enemy_->Draw(viewProjection_);
+
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 #pragma endregion
