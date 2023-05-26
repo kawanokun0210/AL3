@@ -12,6 +12,15 @@ inline Vector3 Add(const Vector3& v1, const Vector3& v2) {
 	return result;
 }
 
+inline Vector3 Subtract(const Vector3& v1, const Vector3& v2) { 
+	Vector3 result{};
+
+	result.x = v1.x - v2.x;
+	result.y = v1.y - v2.y;
+	result.z = v1.z - v2.z;
+	return result;
+}
+
 inline Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2) {
 	Matrix4x4 result{};
 	for (int x = 0; x < 4; x++) {
