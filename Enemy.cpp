@@ -37,7 +37,7 @@ void Enemy::LeaveMove() {
 	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
 	worldTransform_.UpdateMatrix();
 
-	if (worldTransform_.translation_.z < 30.0f) {
+	if (worldTransform_.translation_.z > 30.0f) {
 		phase_ = Phase::Leave;
 	}
 
