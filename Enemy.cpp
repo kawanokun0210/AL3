@@ -43,22 +43,14 @@ void Enemy::LeaveMove() {
 
 }
 
+void (Enemy::*Enemy::spFuncTable[])(){
+	&Enemy::ApproachMove,
+	&Enemy::LeaveMove
+};
+
 void Enemy::Update() {
 
-	switch (phase_) {
-	case Phase::Approach:
-
-		Enemy::ApproachMove();
-
-		break;
-
-	case Phase::Leave:
-
-		Enemy::LeaveMove();
-
-		break;
 	
-	}
 
 }
 

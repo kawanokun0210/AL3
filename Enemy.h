@@ -21,7 +21,13 @@ public:
 
 	void LeaveMove();
 
+	void Func1();
+
+	void Func2();
+
 private:
+
+	static void (Enemy::*spFuncTable[])();
 
 	WorldTransform worldTransform_;
 	Model* model_;
