@@ -2,14 +2,49 @@
 #include "newMath.h"
 #include "Model.h"
 
+class Enemy;
+
 enum class Phase {
 	Approach,
 	Leave,
 };
 
+class EnemyState {
+
+protected:
+
+	Enemy* enemy_ = nullptr;
+
+public:
+
+	virtual void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
+	virtual void Update(){};
+
+};
+
+class EnemyStateApproah : public EnemyState {
+
+public:
+
+	void Update();
+
+};
+
+
+class EnemyStateLeave : public EnemyState {
+
+public:
+
+	void Update();
+
+};
+
+
 class Enemy {
 
 public:
+
+	~Enemy() { delete state; }
 
 	void Initialize(Model* model, const Vector3& position);
 
@@ -17,9 +52,11 @@ public:
 
 	void Draw(const ViewProjection& view);
 
-	void ApproachMove();
+	void ChangeState(EnemyState* newEnemyState);
 
-	void LeaveMove();
+	WorldTransform GetWT() { return worldTransform_; }
+
+	void SetPosition(Vector3 speed);
 
 private:
 
@@ -29,9 +66,6 @@ private:
 
 	Phase phase_ = Phase::Approach;
 
-	static void (Enemy::*spFuncTable[])();
-
-	void(Enemy::*pApproachMove)();
-
+	EnemyState* state; 
 
 };
