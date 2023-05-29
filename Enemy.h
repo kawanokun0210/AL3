@@ -21,18 +21,17 @@ public:
 
 	void LeaveMove();
 
-	void Func1();
-
-	void Func2();
-
 private:
-
-	static void (Enemy::*spFuncTable[])();
 
 	WorldTransform worldTransform_;
 	Model* model_;
 	uint32_t texturehandle_;
 
 	Phase phase_ = Phase::Approach;
+
+	static void (Enemy::*spFuncTable[])();
+
+	void(Enemy::*pApproachMove)();
+
 
 };

@@ -50,7 +50,9 @@ void (Enemy::*Enemy::spFuncTable[])(){
 
 void Enemy::Update() {
 
-	
+	(this->*spFuncTable[static_cast<size_t>(phase_)])();
+
+		worldTransform_.UpdateMatrix();
 
 }
 
