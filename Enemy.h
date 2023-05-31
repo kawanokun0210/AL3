@@ -1,6 +1,11 @@
-#pragma once
+﻿#pragma once
 #include "newMath.h"
+#include "WorldTransform.h"
+#include "ViewProjection.h"
 #include "Model.h"
+#include <list>
+#include "EnemyBullet.h"
+
 
 class Enemy;
 
@@ -44,7 +49,7 @@ class Enemy {
 
 public:
 
-	~Enemy() { delete state; }
+	~Enemy();
 
 	void Initialize(Model* model, const Vector3& position);
 
@@ -58,6 +63,9 @@ public:
 
 	void SetPosition(Vector3 speed);
 
+	// 攻撃
+	void Attack();
+
 private:
 
 	WorldTransform worldTransform_;
@@ -67,5 +75,12 @@ private:
 	Phase phase_ = Phase::Approach;
 
 	EnemyState* state; 
+
+	// 弾
+	std::list<EnemyBullet*> bullets_;
+
+	int count = 0;
+
+	int timer = 0;
 
 };
