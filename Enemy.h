@@ -3,6 +3,7 @@
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 #include "Model.h"
+#include "TimedCall.h"
 #include <list>
 #include "EnemyBullet.h"
 
@@ -66,6 +67,10 @@ public:
 	// 攻撃
 	void Attack();
 
+	void Fire();
+
+	void FireAndReset();
+
 private:
 
 	WorldTransform worldTransform_;
@@ -79,7 +84,9 @@ private:
 	// 弾
 	std::list<EnemyBullet*> bullets_;
 
-	int count = 0;
+	std::list<TimedCall*> timedCall_;
+
+	static const int kShotInterval = 60;
 
 	int timer = 0;
 

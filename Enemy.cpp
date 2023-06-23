@@ -3,34 +3,30 @@
 
 Enemy::~Enemy() {
 
-	 delete state;
+	delete state;
 	for (EnemyBullet* bullet : bullets_) {
 		delete bullet;
 	}
-
 }
 
 void Enemy::Attack() {
 
-	timer++;
+	timer--;
 
-	if (count == 0) {
-		if (timer >= 0) {
-			// 弾の速度
-			const float kBulletSpeed = -1.0f;
-			Vector3 velocity(0, 0, kBulletSpeed);
-			velocity = TransformNormal(velocity, worldTransform_.matWorld_);
+	if (timer < 0) {
+		// 弾の速度
+		const float kBulletSpeed = -1.0f;
+		Vector3 velocity(0, 0, kBulletSpeed);
+		velocity = TransformNormal(velocity, worldTransform_.matWorld_);
 
-			EnemyBullet* newBullet = new EnemyBullet();
-			newBullet->Initialize(model_, worldTransform_.translation_, velocity);
-			// 弾を登録
-			// bullet_ = newBullet;
-			bullets_.push_back(newBullet);
-			count++;
-		}
-	} else if (timer >= 60){
-		count = 0;
-		timer = 0;
+		EnemyBullet* newBullet = new EnemyBullet();
+		newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+		// 弾を登録
+		// bullet_ = newBullet;
+		bullets_.push_back(newBullet);
+
+		timer = kShotInterval;
+
 	}
 }
 
@@ -60,6 +56,7 @@ void Enemy::SetPosition(Vector3 speed) {
 void EnemyStateApproah::Update() {
 	Vector3 appSpeed(0, 0, -0.2f);
 	enemy_->SetPosition(appSpeed);
+
 	if (enemy_->GetWT().translation_.z < 0.0f) {
 		enemy_->ChangeState(new EnemyStateLeave);
 	}
@@ -91,7 +88,6 @@ void Enemy::Update() {
 	for (EnemyBullet* bullet : bullets_) {
 		bullet->Update();
 	}
-
 }
 
 void Enemy::Draw(const ViewProjection& view) {
@@ -102,5 +98,4 @@ void Enemy::Draw(const ViewProjection& view) {
 	for (EnemyBullet* bullet : bullets_) {
 		bullet->Draw(view);
 	}
-
 }
