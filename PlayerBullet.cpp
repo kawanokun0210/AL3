@@ -21,7 +21,7 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vecto
 void PlayerBullet::Update() { 
 	worldTransform_.UpdateMatrix();
 	//座標を移動
-	worldTransform_.translation_ = Add(worldTransform_.translation_, velocity_);
+	worldTransform_.translation_ = Math::Add(worldTransform_.translation_, velocity_);
 
 	//時間経過でデス
 	if (--deathtimer_ <= 0) {

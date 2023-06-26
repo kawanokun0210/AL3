@@ -13,7 +13,7 @@ void Player::Attack() {
 			//弾の速度
 			const float kBulletSpeed = 1.0f;
 			Vector3 velocity(0, 0, kBulletSpeed);
-			velocity = TransformNormal(velocity, worldTransform_.matWorld_);
+			velocity = Math::TransformNormal(velocity, worldTransform_.matWorld_);
 
 			PlayerBullet* newBullet = new PlayerBullet();
 			newBullet->Initialize(model_, worldTransform_.translation_, velocity);
@@ -40,6 +40,16 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	input_ = Input::GetInstance();
 
 };
+
+Vector3 Player::GetWorldPosition(){
+	Vector3 worldPos;
+
+	worldPos.x = worldTransform_.translation_.x;
+	worldPos.y = worldTransform_.translation_.y;
+	worldPos.z = worldTransform_.translation_.z;
+
+	return worldPos;
+}
 
 void Player::Update() {
 
@@ -91,9 +101,9 @@ void Player::Update() {
 	worldTransform_.translation_.y = inputFloat3[1];
 
 	// ベクターの加算
-	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
+	worldTransform_.translation_ = Math::Add(worldTransform_.translation_, move);
 	// アフィン変換行列の作成
-	worldTransform_.matWorld_ = MakeAffineMatrix(
+	worldTransform_.matWorld_ = Math::MakeAffineMatrix(
 	    worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 
 	// ImGuiスライダー

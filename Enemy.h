@@ -6,7 +6,9 @@
 #include "TimedCall.h"
 #include <list>
 #include "EnemyBullet.h"
+#include "Player.h"
 
+class Player;
 
 class Enemy;
 
@@ -69,7 +71,9 @@ public:
 
 	void Fire();
 
-	void FireAndReset();
+	void SetPlayer(Player* player) { player_ = player; }
+
+	Vector3 GetWorldPosition();
 
 private:
 
@@ -78,6 +82,8 @@ private:
 	uint32_t texturehandle_;
 
 	Phase phase_ = Phase::Approach;
+
+	Player* player_ = nullptr;
 
 	EnemyState* state; 
 

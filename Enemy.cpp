@@ -21,17 +21,28 @@ void Enemy::Fire() {
 }
 
 void Enemy::Attack() {
-
+	assert(player_);
 	timer--;
 
 	if (timer < 0) {
 	  //弾の速度
-	const float kBulletSpeed = -1.0f;
-	Vector3 velocity(0, 0, kBulletSpeed);
-	velocity = TransformNormal(velocity, worldTransform_.matWorld_);
+	const float kBulletSpeed = 1.0f;
+
+	Vector3 plaPos = player_->GetWorldPosition();
+	Vector3 enePos = GetWorldPosition();
+	Vector3 speed;
+	speed.x = plaPos.x - enePos.x;
+	speed.y = plaPos.y - enePos.y;
+	speed.z = plaPos.z - enePos.z;
+	speed = Math::Normalize(speed);
+	speed.x *= kBulletSpeed;
+	speed.y *= kBulletSpeed;
+	speed.z *= kBulletSpeed;
+
+	speed = Math::TransformNormal(speed, worldTransform_.matWorld_);
 
 	EnemyBullet* newBullet = new EnemyBullet();
-	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+	newBullet->Initialize(model_, worldTransform_.translation_, speed);
 	// 弾を登録
 	//bullet_ = newBullet;
 	bullets_.push_back(newBullet);
@@ -53,6 +64,16 @@ void Enemy::Initialize(Model* model, const Vector3& position) {
 	state->SetEnemy(this);
 }
 
+Vector3 Enemy::GetWorldPosition() { 
+	Vector3 worldPos;
+
+	worldPos.x = worldTransform_.translation_.x;
+	worldPos.y = worldTransform_.translation_.y;
+	worldPos.z = worldTransform_.translation_.z;
+
+	return worldPos;
+}
+
 void Enemy::ChangeState(EnemyState* newEnemyState) {
 	delete state;
 
@@ -61,7 +82,7 @@ void Enemy::ChangeState(EnemyState* newEnemyState) {
 }
 
 void Enemy::SetPosition(Vector3 speed) {
-	worldTransform_.translation_ = Add(worldTransform_.translation_, speed);
+	worldTransform_.translation_ = Math::Add(worldTransform_.translation_, speed);
 }
 
 void EnemyStateApproah::Update() {

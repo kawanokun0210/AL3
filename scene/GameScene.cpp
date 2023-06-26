@@ -30,6 +30,7 @@ void GameScene::Initialize() {
 	player_->Initialize(model_, textureHandle_);
 	//敵の生成
 	enemy_ = new Enemy;
+	enemy_->SetPlayer(player_);
 	Vector3 position = {30.0f, 0.0f, 30.0f};
 	//敵初期化
 	enemy_->Initialize(model_, position);

@@ -32,9 +32,11 @@ public:
 	//攻撃
 	void Attack();
 
+	Vector3 GetWorldPosition();
+
 	//デストラクタ
 	~Player();
-
+	
 private:
 
 	//ワールド変換データ
