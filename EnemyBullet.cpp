@@ -16,6 +16,16 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 	// 引数で受け取った速度をメンバに代入
 	velocity_ = velocity;
 
+	//Z方向に伸びた形状
+	worldTransform_.scale_.x = 0.5f;
+	worldTransform_.scale_.y = 0.5f;
+	worldTransform_.scale_.z = 3.0f;
+
+	//Y軸周り角度
+	worldTransform_.rotation_.y = std::atan2(velocity_.x, velocity_.z);
+	Math::MakeRotateYMatrix(-worldTransform_.rotation_.y);
+	worldTransform_.rotation_.x = std::atan2(-velocity_.y, velocity_.z);
+
 }
 
 void EnemyBullet::Update() {
