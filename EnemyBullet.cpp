@@ -18,6 +18,20 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 
 }
 
+Vector3 EnemyBullet::GetWorldPosition() {
+	Vector3 worldPos;
+
+	worldPos.x = worldTransform_.translation_.x;
+	worldPos.y = worldTransform_.translation_.y;
+	worldPos.z = worldTransform_.translation_.z;
+
+	return worldPos;
+}
+
+void EnemyBullet::OnCollision() {
+	isDead_ = true;
+}
+
 void EnemyBullet::Update() {
 
 	worldTransform_.UpdateMatrix();

@@ -18,6 +18,20 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vecto
 
 }
 
+Vector3 PlayerBullet::GetWorldPosition() {
+	Vector3 worldPos;
+
+	worldPos.x = worldTransform_.translation_.x;
+	worldPos.y = worldTransform_.translation_.y;
+	worldPos.z = worldTransform_.translation_.z;
+
+	return worldPos;
+}
+
+void PlayerBullet::OnCollision() { 
+	isDead_ = true;
+}
+
 void PlayerBullet::Update() { 
 	worldTransform_.UpdateMatrix();
 	//座標を移動

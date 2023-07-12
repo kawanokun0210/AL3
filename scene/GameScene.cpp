@@ -1,11 +1,11 @@
 #include "GameScene.h"
+#include "AxisIndicator.h"
 #include "TextureManager.h"
 #include <cassert>
-#include "AxisIndicator.h"
 
 GameScene::GameScene() {}
 
-GameScene::~GameScene() { 
+GameScene::~GameScene() {
 	delete model_;
 	delete player_;
 	delete debugCamera_;
@@ -17,33 +17,36 @@ void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
-	//テクスチャを読み込み
+	// テクスチャを読み込み
 	textureHandle_ = TextureManager::Load("sample.png");
-	//3Dモデルの生成
+	// 3Dモデルの生成
 	model_ = Model::Create();
 	worldTransform_.Initialize();
-	//ビュープロジェクションの初期化
+	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
-	//自キャラの生成
+	// 自キャラの生成
 	player_ = new Player();
-	//自キャラの初期化
+	// 自キャラの初期化
 	player_->Initialize(model_, textureHandle_);
-	//敵の生成
+	// 敵の生成
 	enemy_ = new Enemy;
 	enemy_->SetPlayer(player_);
 	Vector3 position = {30.0f, 0.0f, 30.0f};
-	//敵初期化
+	// 敵初期化
 	enemy_->Initialize(model_, position);
-	//デバッグカメラの生成
+	// デバッグカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
-	//軸方向表示を有効にする
+	// 軸方向表示を有効にする
 	AxisIndicator::GetInstance()->SetVisible(true);
-	//アドレス渡し
+	// アドレス渡し
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 }
 
 void GameScene::Update() {
-	//自キャラの更新
+	// 自キャラの更新
+
+	CheckAllCollisions();
+
 	player_->Update();
 
 	enemy_->Update();
@@ -69,10 +72,11 @@ void GameScene::Update() {
 #endif
 
 	debugCamera_->Update();
+
 }
 
 void GameScene::Draw() {
-	
+
 	// コマンドリストの取得
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
@@ -99,7 +103,7 @@ void GameScene::Draw() {
 	/// </summary>
 
 	player_->Draw(viewProjection_);
-	
+
 	enemy_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
@@ -117,5 +121,71 @@ void GameScene::Draw() {
 	// スプライト描画後処理
 	Sprite::PostDraw();
 
+#pragma endregion
+}
+
+void GameScene::CheckAllCollisions() {
+	// 判定対象AとBの座標
+	Vector3 posA, posB;
+
+	// 自弾リストの取得
+	const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
+	// 敵弾リストの取得
+	const std::list<EnemyBullet*>& enemyBullets = enemy_->GetBullets();
+
+#pragma region 自キャラと敵弾
+	posA = player_->GetWorldPosition();
+
+	for (EnemyBullet* bullet : enemyBullets) {
+		posB = bullet->GetWorldPosition();
+
+		float judge = (posB.x - posA.x) * (posB.x - posA.x) +
+		              (posB.y - posA.y) * (posB.y - posA.y) + (posB.z - posA.z) * (posB.z - posA.z);
+
+		float playerRad = 2.5f;
+		float enemyRad = 2.5f;
+		if (judge <= (playerRad + enemyRad) * (playerRad + enemyRad)) {
+			player_->OnCollision();
+			bullet->OnCollision();
+		}
+	}
+#pragma endregion
+
+#pragma region 自弾と敵キャラ
+
+	for (PlayerBullet* playerBullet : playerBullets) {
+		posB = playerBullet->GetWorldPosition();
+		for (EnemyBullet* enemyBullet : enemyBullets) {
+			posA = enemyBullet->GetWorldPosition();
+
+			float judge = (posB.x - posA.x) * (posB.x - posA.x) +
+			              (posB.y - posA.y) * (posB.y - posA.y) +
+			              (posB.z - posA.z) * (posB.z - posA.z);
+
+			float playerRad = 2.5f;
+			float enemyRad = 2.5f;
+			if (judge <= (playerRad + enemyRad) * (playerRad + enemyRad)) {
+				playerBullet->OnCollision();
+				enemyBullet->OnCollision();
+			}
+		}
+	}
+#pragma endregion
+
+#pragma region 自弾と敵キャラ
+	posB = enemy_->GetWorldPosition();
+	for (PlayerBullet* bullet : playerBullets) {
+		posA = bullet->GetWorldPosition();
+
+		float judge = (posB.x - posA.x) * (posB.x - posA.x) +
+		              (posB.y - posA.y) * (posB.y - posA.y) + (posB.z - posA.z) * (posB.z - posA.z);
+
+		float playerRad = 2.5f;
+		float enemyRad = 2.5f;
+		if (judge <= (playerRad + enemyRad) * (playerRad + enemyRad)) {
+			player_->OnCollision();
+			bullet->OnCollision();
+		}
+	}
 #pragma endregion
 }

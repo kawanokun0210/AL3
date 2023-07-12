@@ -41,6 +41,10 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 
 };
 
+void Player::OnCollision() {
+
+}
+
 Vector3 Player::GetWorldPosition(){
 	Vector3 worldPos;
 
