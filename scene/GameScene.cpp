@@ -52,13 +52,13 @@ void GameScene::Initialize() {
 void GameScene::Update() {
 	// 自キャラの更新
 
-	CheckAllCollisions();
-
-	skydome_->Update();
-
 	player_->Update();
 
 	enemy_->Update();
+
+	CheckAllCollisions();
+
+	skydome_->Update();
 
 //#ifdef _DEBUG
 
