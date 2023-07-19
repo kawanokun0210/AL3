@@ -11,6 +11,7 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include <Skydome.h>
 
 /// <summary>
 /// ゲームシーン
@@ -66,6 +67,10 @@ private: // メンバ変数
 
 	// 自キャラ
 	Player* player_ = nullptr;
+
+	//スカイドーム
+	Skydome* skydome_ = nullptr;
+	Model* modelSkydome_ = nullptr;
 
 	bool isDebugCameraActive_ = false;
 	DebugCamera* debugCamera_ = nullptr;
