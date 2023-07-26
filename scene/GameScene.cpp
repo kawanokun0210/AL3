@@ -10,7 +10,7 @@ GameScene::~GameScene() {
 	delete player_;
 	delete debugCamera_;
 	delete enemy_;
-	delete modelSkydome_;
+	//delete modelSkydome_;
 	delete skydome_;
 }
 
@@ -45,7 +45,7 @@ void GameScene::Initialize() {
 
 	skydome_ = new Skydome();
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
-	skydome_->Initialize(modelSkydome_, {0, 0, 0});
+	skydome_->Initialize(modelSkydome_, {0, 80, 0});
 
 }
 
