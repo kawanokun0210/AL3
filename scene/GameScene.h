@@ -12,6 +12,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include <Skydome.h>
+#include <RailCamera.h>
 
 /// <summary>
 /// ゲームシーン
@@ -71,6 +72,8 @@ private: // メンバ変数
 	//スカイドーム
 	Skydome* skydome_ = nullptr;
 	Model* modelSkydome_ = nullptr;
+
+	RailCamera* railCamera_ = nullptr;
 
 	bool isDebugCameraActive_ = false;
 	DebugCamera* debugCamera_ = nullptr;

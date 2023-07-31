@@ -36,6 +36,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	textureHandle_ = textureHandle;
 
 	worldTransform_.Initialize();
+	worldTransform_.translation_.z = -50.0f;
 
 	input_ = Input::GetInstance();
 
@@ -48,9 +49,9 @@ void Player::OnCollision() {
 Vector3 Player::GetWorldPosition(){
 	Vector3 worldPos;
 
-	worldPos.x = worldTransform_.translation_.x;
-	worldPos.y = worldTransform_.translation_.y;
-	worldPos.z = worldTransform_.translation_.z;
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.x = worldTransform_.matWorld_.m[3][1];
+	worldPos.x = worldTransform_.matWorld_.m[3][2];
 
 	return worldPos;
 }
@@ -153,3 +154,5 @@ void Player::Draw(ViewProjection viewProjection){
 	}
 
 };
+
+void Player::SetParent(const WorldTransform* parent) { worldTransform_.parent_ = parent; }
