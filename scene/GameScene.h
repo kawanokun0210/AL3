@@ -13,6 +13,7 @@
 #include "WorldTransform.h"
 #include <Skydome.h>
 #include <RailCamera.h>
+#include <sstream>
 
 /// <summary>
 /// ゲームシーン
@@ -51,6 +52,16 @@ public: // メンバ関数
 	
 	void CheckAllCollisions();
 
+	void AddEnemyBullet(EnemyBullet* enemyBullet);
+
+	void AddEnemy(Enemy* enemy);
+
+	void EnemyIni(Model* model, const Vector3 position);
+
+	void LoadEnemyPopData();
+
+	void UpDateEnemyPopCommands();
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -77,7 +88,14 @@ private: // メンバ変数
 
 	bool isDebugCameraActive_ = false;
 	DebugCamera* debugCamera_ = nullptr;
-	Enemy* enemy_ = nullptr;
+	//Enemy* enemy_ = nullptr;
+
+	std::list<EnemyBullet*> enemyBullets_;
+	std::list<Enemy*> enemys_;
+
+	std::stringstream enemyPopCommands;
+	bool isWait_ = false;
+	int32_t waitTimer_ = 0;
 
 	/// <summary>
 	/// ゲームシーン用

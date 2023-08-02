@@ -9,6 +9,7 @@
 #include "Player.h"
 
 class Player;
+class GameScene;
 
 class Enemy;
 
@@ -54,7 +55,7 @@ public:
 
 	~Enemy();
 
-	void Initialize(Model* model, const Vector3& position);
+	void Initialize(Model* model, const Vector3& position, GameScene* gameScene);
 
 	void Update();
 
@@ -75,9 +76,15 @@ public:
 
 	Vector3 GetWorldPosition();
 
+	static const int kShotInterval = 60;
+
+	bool IsDead() const { return isDead_; }
+
 	// 衝突を検証したら呼び出される関数
 	void OnCollision();
 	const std::list<EnemyBullet*>& GetBullets() const { return bullets_; }
+
+	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 
 private:
 
@@ -91,13 +98,15 @@ private:
 
 	EnemyState* state; 
 
+	GameScene* gameScene_ = nullptr;
+
 	// 弾
 	std::list<EnemyBullet*> bullets_;
 
 	std::list<TimedCall*> timedCall_;
 
-	static const int kShotInterval = 60;
-
 	int timer = 0;
+
+	bool isDead_ = false;
 
 };
