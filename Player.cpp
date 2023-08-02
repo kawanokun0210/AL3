@@ -36,7 +36,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	textureHandle_ = textureHandle;
 
 	worldTransform_.Initialize();
-	worldTransform_.translation_.z = -50.0f;
+	worldTransform_.translation_.z = 50.0f;
 
 	input_ = Input::GetInstance();
 
@@ -129,6 +129,7 @@ void Player::Update() {
 	worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMoveLimitY);
 
 	Attack();
+	worldTransform_.UpdateMatrix();
 	/* if (bullet_) {
 		bullet_->Update();
 	}*/
