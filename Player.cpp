@@ -56,7 +56,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 
 	worldTransform3DReticle_.Initialize();
 
-	uint32_t textureReticle = TextureManager::Load("beam.png");
+	uint32_t textureReticle = TextureManager::Load("reticle.png");
 
 	sprite2DReticle_ = Sprite::Create(
 	    textureReticle, {WinApp::kWindowWidth / 2, WinApp::kWindowHeight / 2}, {1, 1, 1, 1},
@@ -186,7 +186,7 @@ void Player::Update(ViewProjection& viewProjection) {
 void Player::Draw(ViewProjection viewProjection){
 
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
-	model_->Draw(worldTransform3DReticle_, viewProjection, textureHandle_);
+	//model_->Draw(worldTransform3DReticle_, viewProjection, textureHandle_);
 	//弾描画
 	/* if (bullet_) {
 		bullet_->Draw(viewProjection);

@@ -70,4 +70,5 @@ private:
 	WorldTransform worldTransform3DReticle_;
 	
 	Sprite* sprite2DReticle_ = nullptr;
+
 };
