@@ -13,6 +13,7 @@ Player::~Player() {
 void Player::Attack() {
 	if (!isControl) {
 		XINPUT_STATE joyState;
+
 		if (!Input::GetInstance()->GetJoystickState(0, joyState)) {
 			return;
 		}
@@ -118,7 +119,9 @@ void Player::Update(ViewProjection& viewProjection) {
 
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 		move.x += (float)joyState.Gamepad.sThumbLX / SHRT_MAX * kCharacterSpeed;
+		inputFloat3[0] = worldTransform_.translation_.x;
 		move.y += (float)joyState.Gamepad.sThumbLY / SHRT_MAX * kCharacterSpeed;
+		inputFloat3[1] = worldTransform_.translation_.y;
 	}
 
 	// 押した方向で移動ベクトルを変更(左右)
@@ -154,9 +157,9 @@ void Player::Update(ViewProjection& viewProjection) {
 
 	// ベクターの加算
 	worldTransform_.translation_ = Math::Add(worldTransform_.translation_, move);
-	// アフィン変換行列の作成
-	worldTransform_.matWorld_ = Math::MakeAffineMatrix(
-	    worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
+	//// アフィン変換行列の作成
+	//worldTransform_.matWorld_ = Math::MakeAffineMatrix(
+	//    worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 
 	// ImGuiスライダー
 	ImGui::Begin("PlayerDebug");
@@ -215,7 +218,7 @@ void Player::Update(ViewProjection& viewProjection) {
 void Player::Draw(ViewProjection viewProjection){
 
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
-	//model_->Draw(worldTransform3DReticle_, viewProjection, textureHandle_);
+	model_->Draw(worldTransform3DReticle_, viewProjection, textureHandle_);
 	//弾描画
 	/* if (bullet_) {
 		bullet_->Draw(viewProjection);
