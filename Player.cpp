@@ -30,7 +30,7 @@ void Player::Attack() {
 
 
 			PlayerBullet* newBullet = new PlayerBullet();
-			newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+			newBullet->Initialize(model_, GetWorldPosition(), velocity);
 			// 弾を登録
 			//bullet_ = newBullet;
 			bullets_.push_back(newBullet);
@@ -56,7 +56,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 
 	worldTransform3DReticle_.Initialize();
 
-	uint32_t textureReticle = TextureManager::Load("tex1.png");
+	uint32_t textureReticle = TextureManager::Load("beam.png");
 
 	sprite2DReticle_ = Sprite::Create(
 	    textureReticle, {WinApp::kWindowWidth / 2, WinApp::kWindowHeight / 2}, {1, 1, 1, 1},
@@ -72,8 +72,8 @@ Vector3 Player::GetWorldPosition(){
 	Vector3 worldPos;
 
 	worldPos.x = worldTransform_.matWorld_.m[3][0];
-	worldPos.x = worldTransform_.matWorld_.m[3][1];
-	worldPos.x = worldTransform_.matWorld_.m[3][2];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
 
 	return worldPos;
 }

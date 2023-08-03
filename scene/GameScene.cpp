@@ -61,7 +61,7 @@ void GameScene::Initialize() {
 
 	player_->SetParent(&railCamera_->GetWorldTransform());
 
-	TextureManager::Load("tex1.png");
+	//TextureManager::Load("beam.png");
 
 	LoadEnemyPopData();
 
@@ -183,7 +183,7 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 
-	player_->DrawUI();
+	//player_->DrawUI();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
