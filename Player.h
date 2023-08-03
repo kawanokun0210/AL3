@@ -8,6 +8,7 @@
 #include "ImGuiManager.h"
 #include "PlayerBullet.h"
 #include <list>
+#include "Sprite.h"
 
 
 
@@ -22,7 +23,7 @@ public:
 	/// <summary>
 	/// 毎フレーム処理
 	/// </summary>
-	void Update();
+	void Update(ViewProjection& viewProjection);
 
 	/// <summary>
 	/// 描画
@@ -41,6 +42,8 @@ public:
 	void SetParent(const WorldTransform* parent);
 
 	WorldTransform& GetWorldMatrix() { return worldTransform_; }
+
+	void DrawUI();
 
 	//デストラクタ
 	~Player();
@@ -64,4 +67,7 @@ private:
 
 	int count = 0;
 
+	WorldTransform worldTransform3DReticle_;
+	
+	Sprite* sprite2DReticle_ = nullptr;
 };
