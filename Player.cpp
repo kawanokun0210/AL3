@@ -11,6 +11,25 @@ Player::~Player() {
 }
 
 void Player::Attack() {
+	if (!isControl) {
+		XINPUT_STATE joyState;
+		if (!Input::GetInstance()->GetJoystickState(0, joyState)) {
+			return;
+		}
+		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) {
+			isAttack = true;
+		} else {
+			isAttack = false;
+		}
+	} else if (isControl){
+		if (input_->PushKey(DIK_SPACE)) {
+			isAttack = true;
+		} else {
+			isAttack = false;
+		}
+	}
+
+
 	if (input_->PushKey(DIK_SPACE)) {
 		if (count == 0) {
 			//弾の速度
@@ -79,6 +98,7 @@ Vector3 Player::GetWorldPosition(){
 }
 
 void Player::Update(ViewProjection& viewProjection) {
+	XINPUT_STATE joyState;
 
 	//デスフラグの立った球を削除
 	bullets_.remove_if([](PlayerBullet* bullet) {
@@ -95,6 +115,11 @@ void Player::Update(ViewProjection& viewProjection) {
 
 	// キャラクターの移動速さ
 	const float kCharacterSpeed = 0.2f;
+
+	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+		move.x += (float)joyState.Gamepad.sThumbLX / SHRT_MAX * kCharacterSpeed;
+		move.y += (float)joyState.Gamepad.sThumbLY / SHRT_MAX * kCharacterSpeed;
+	}
 
 	// 押した方向で移動ベクトルを変更(左右)
 	if (input_->PushKey(DIK_LEFT)) {
@@ -153,7 +178,9 @@ void Player::Update(ViewProjection& viewProjection) {
 	Attack();
 	worldTransform_.UpdateMatrix();
 	
-	const float KDistancePlayerTo3DReticle = 50.0f;
+	MouseUpdate(viewProjection);
+
+	/* const float KDistancePlayerTo3DReticle = 50.0f;
 	Matrix4x4 Reticle3DTransMat = Math::MakeTranslateMatrix(worldTransform3DReticle_.translation_);
 	Vector3 offset = {0, 0, 1.0f};
 	Matrix4x4 worMat = Math::MakeAffineMatrix(
@@ -174,7 +201,7 @@ void Player::Update(ViewProjection& viewProjection) {
 	Matrix4x4 matViewProjectionViewPort =
 	    Math::MMMultiply(viewProjection.matProjection, matViewPort);
 	positionReticle = Math::TransformCoord(positionReticle, matViewProjectionViewPort);
-	sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
+	sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));*/
 
 	//弾更新
 	for (PlayerBullet* bullet : bullets_) {
@@ -200,5 +227,78 @@ void Player::Draw(ViewProjection viewProjection){
 };
 
 void Player::DrawUI() { sprite2DReticle_->Draw(); }
+
+void Player::MouseUpdate(ViewProjection& view) {
+
+	if (input_->TriggerKey(DIK_M)) {
+		isControl = true;
+	} else if (input_->TriggerKey(DIK_C)) {
+		isControl = false;
+	}
+
+	if (isControl) {
+		POINT mousePosition;
+
+		GetCursorPos(&mousePosition);
+
+		HWND hwnd = WinApp::GetInstance()->GetHwnd();
+		ScreenToClient(hwnd, &mousePosition);
+
+		sprite2DReticle_->SetPosition({float(mousePosition.x), float(mousePosition.y)});
+
+	} else if (!isControl) {
+		XINPUT_STATE joyState;
+		Vector2 spritePosition = sprite2DReticle_->GetPosition();
+
+		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+			spritePosition.x += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * 8.0f;
+			spritePosition.y -= (float)joyState.Gamepad.sThumbRY / SHRT_MAX * 8.0f;
+
+			sprite2DReticle_->SetPosition(spritePosition);
+		}
+
+	}
+
+	Matrix4x4 viewPortMat = Math::MakeViewPortMatrix(
+	    0, 0, float(WinApp::kWindowWidth), float(WinApp::kWindowHeight), 0.0f, 1.0f);
+	Matrix4x4 matVPV =
+	    Math::MMMultiply(view.matView, Math::MMMultiply(view.matProjection, viewPortMat));
+	Matrix4x4 matInverseVPV = Math::Inverse(matVPV);
+
+	Vector3 posNear =
+	    Vector3(sprite2DReticle_->GetPosition().x, sprite2DReticle_->GetPosition().y, 0);
+	Vector3 posFar =
+	    Vector3(sprite2DReticle_->GetPosition().x, sprite2DReticle_->GetPosition().y, 1);
+
+	posNear = Math::TransformCoord(posNear, matInverseVPV);
+	posFar = Math::TransformCoord(posFar, matInverseVPV);
+
+	Vector3 mouseDirection;
+	mouseDirection.x = posFar.x - posNear.x;
+	mouseDirection.y = posFar.y - posNear.y;
+	mouseDirection.z = posFar.z - posNear.z;
+	mouseDirection = Math::Normalize(mouseDirection);
+
+	const float kDistanceTestObject = 100.0f;
+	worldTransform3DReticle_.translation_.x =
+	    Math::FVMultiply(kDistanceTestObject, mouseDirection).x + posNear.x;
+	worldTransform3DReticle_.translation_.y =
+	    Math::FVMultiply(kDistanceTestObject, mouseDirection).y + posNear.y;
+	worldTransform3DReticle_.translation_.z =
+	    Math::FVMultiply(kDistanceTestObject, mouseDirection).z + posNear.z;
+
+	worldTransform3DReticle_.UpdateMatrix();
+
+	ImGui::Begin("Player");
+	ImGui::Text(
+	    "2DReticle:(%f,%f)", sprite2DReticle_->GetPosition().x, sprite2DReticle_->GetPosition().y);
+	ImGui::Text("Near:(%+.2f,%+.2f,%+.2f)", posNear.x, posNear.y, posNear.z);
+	ImGui::Text("Far:(%+.2f,%+.2f,%+.2f)", posFar.x, posFar.y, posFar.z);
+	ImGui::Text(
+	    "3DReticle:(%+.2f,%+.2f,%+.2f)", worldTransform3DReticle_.translation_.x,
+	    worldTransform3DReticle_.translation_.y, worldTransform3DReticle_.translation_.z);
+	ImGui::End();
+
+}
 
 void Player::SetParent(const WorldTransform* parent) { worldTransform_.parent_ = parent; }
