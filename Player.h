@@ -69,8 +69,8 @@ private:
 
 	int count = 0;
 
-	bool isControl = true;
-	bool isAttack = true;
+	bool isControl = false;
+	bool isAttack = false;
 
 	WorldTransform worldTransform3DReticle_;
 	
