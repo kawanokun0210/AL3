@@ -43,7 +43,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 
 Vector3 Player::GetWorldPosition(){
 	Vector3 worldPos;
-
+	//worldTransform_.UpdateMatrix();
 	worldPos.x = worldTransform_.translation_.x;
 	worldPos.y = worldTransform_.translation_.y;
 	worldPos.z = worldTransform_.translation_.z;
@@ -61,7 +61,7 @@ void Player::Update() {
 		}
 		return false;
 	});
-
+	//worldTransform_.UpdateMatrix();
 	worldTransform_.TransferMatrix();
 	// キャラクターの移動ベクトル
 	Vector3 move = {0, 0, 0};
@@ -103,8 +103,8 @@ void Player::Update() {
 	// ベクターの加算
 	worldTransform_.translation_ = Math::Add(worldTransform_.translation_, move);
 	// アフィン変換行列の作成
-	worldTransform_.matWorld_ = Math::MakeAffineMatrix(
-	    worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
+	//worldTransform_.matWorld_ = Math::MakeAffineMatrix(
+	    //worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 
 	// ImGuiスライダー
 	ImGui::Begin("PlayerDebug");
