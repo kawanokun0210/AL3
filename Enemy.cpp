@@ -148,3 +148,7 @@ void Enemy::Draw(const ViewProjection& view) {
 		bullet->Draw(view);
 	}
 }
+
+void Enemy::OnCollision() {
+
+}

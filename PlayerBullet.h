@@ -1,8 +1,8 @@
 ﻿#pragma once
 #include "Model.h"
 #include "WorldTransform.h"
-
-class PlayerBullet {
+#include "Collider.h"
+class PlayerBullet : public Collider {
 public:
 
 	void Initialize(Model* model, const Vector3& position, const Vector3& velocity);

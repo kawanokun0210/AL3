@@ -1,8 +1,9 @@
 ﻿#pragma once
 #include "Model.h"
 #include "WorldTransform.h"
+#include "Collider.h"
 
-class EnemyBullet {
+class EnemyBullet : public Collider {
 
 public:
 

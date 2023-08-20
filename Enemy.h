@@ -7,6 +7,7 @@
 #include <list>
 #include "EnemyBullet.h"
 #include "Player.h"
+#include "Collider.h"
 
 class Player;
 
@@ -48,7 +49,7 @@ public:
 };
 
 
-class Enemy {
+class Enemy : public Collider {
 
 public:
 

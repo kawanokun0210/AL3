@@ -11,6 +11,7 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "Collider.h"
 
 /// <summary>
 /// ゲームシーン
@@ -70,6 +71,8 @@ private: // メンバ変数
 	bool isDebugCameraActive_ = false;
 	DebugCamera* debugCamera_ = nullptr;
 	Enemy* enemy_ = nullptr;
+
+	void CheckCollisionPair(Collider* colliderA, Collider* colliderB);
 
 	/// <summary>
 	/// ゲームシーン用
