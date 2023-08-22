@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Vector3.h"
+
 class Collider {
 public:
 	// 半径を取得

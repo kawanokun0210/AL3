@@ -10,6 +10,7 @@ GameScene::~GameScene() {
 	delete player_;
 	delete debugCamera_;
 	delete enemy_;
+	delete collisionManager_;
 }
 
 void GameScene::Initialize() {
@@ -49,7 +50,16 @@ void GameScene::Update() {
 
 	enemy_->Update();
 
-	CheckAllCollisions();
+	collisionManager_->ClearCollider();
+	collisionManager_->AddCollider(player_);
+	collisionManager_->AddCollider(enemy_);
+	for (PlayerBullet* bullet : player_->GetBullets()) {
+		collisionManager_->AddCollider(bullet);
+	}
+	for (EnemyBullet* bullet : enemy_->GetBullets()) {
+		collisionManager_->AddCollider(bullet);
+	}
+	collisionManager_->CheckAllCollisions();
 
 #ifdef _DEBUG
 
@@ -121,59 +131,4 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 
 #pragma endregion
-}
-
-void GameScene::CheckAllCollisions() {
-
-	std::list<Collider*> colliders_;
-
-#pragma region 自キャラと敵弾
-
-	colliders_.push_back(player_);
-	colliders_.push_back(enemy_);
-
-#pragma endregion
-
-#pragma region 自弾と敵キャラ
-
-	for (PlayerBullet* bullet : player_->GetBullets()) {
-		colliders_.push_back(bullet);
-	}
-
-#pragma endregion
-
-#pragma region 自弾と敵キャラ
-
-	for (EnemyBullet* enemyBullet : enemy_->GetBullets()) {
-		colliders_.push_back(enemyBullet);
-	}
-	std::list<Collider*>::iterator itrA = colliders_.begin();
-	for (; itrA != colliders_.end(); ++itrA) {
-		std::list<Collider*>::iterator itrB = itrA;
-		++itrB;
-		for (; itrB != colliders_.end(); ++itrB) {
-			CheckCollisionPair(*(itrA), *(itrB));
-		}
-	}
-#pragma endregion
-}
-
-void GameScene::CheckCollisionPair(Collider* colliderA, Collider* colliderB) {
-	if (!(colliderA->GetCOllisionAttribute() & colliderB->GetCollosionMask()) ||
-	    !(colliderB->GetCOllisionAttribute() & colliderA->GetCollosionMask())) {
-		return;
-	}
-	// 判定対象AとBの座標
-	Vector3 posA, posB;
-	posA = colliderA->GetWorldPosition();
-	posB = colliderB->GetWorldPosition();
-	float Length = sqrt(
-	    (posB.x - posA.x) * (posB.x - posA.x) + (posB.y - posA.y) * (posB.y - posA.y) +
-	    (posB.z - posA.z) * (posB.z - posA.z));
-	if (Length <= colliderA->GetRadius() + colliderB->GetRadius()) {
-		// コライダーAの衝突時コールバック
-		colliderA->OnCollision();
-		// コライダーBの衝突時コールバック
-		colliderB->OnCollision();
-	}
 }

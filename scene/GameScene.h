@@ -12,6 +12,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "Collider.h"
+#include "CollisionManager.h"
 
 /// <summary>
 /// ゲームシーン
@@ -44,12 +45,6 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
-	/// <summary>
-	/// 衝突判定と応答
-	/// </summary>
-	
-	void CheckAllCollisions();
-
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -72,7 +67,7 @@ private: // メンバ変数
 	DebugCamera* debugCamera_ = nullptr;
 	Enemy* enemy_ = nullptr;
 
-	void CheckCollisionPair(Collider* colliderA, Collider* colliderB);
+	CollisionManager* collisionManager_ = nullptr;
 
 	/// <summary>
 	/// ゲームシーン用
