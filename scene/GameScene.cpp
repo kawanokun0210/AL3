@@ -72,7 +72,6 @@ void GameScene::Update() {
 #endif
 
 	debugCamera_->Update();
-
 }
 
 void GameScene::Draw() {
@@ -125,41 +124,45 @@ void GameScene::Draw() {
 }
 
 void GameScene::CheckAllCollisions() {
-	
-	// 自弾リストの取得
-	const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
-	// 敵弾リストの取得
-	const std::list<EnemyBullet*>& enemyBullets = enemy_->GetBullets();
+
+	std::list<Collider*> colliders_;
 
 #pragma region 自キャラと敵弾
 
-	for (EnemyBullet* bullet : enemyBullets) {
-		CheckCollisionPair(player_, bullet);
+	colliders_.push_back(player_);
+	colliders_.push_back(enemy_);
+
+#pragma endregion
+
+#pragma region 自弾と敵キャラ
+
+	for (PlayerBullet* bullet : player_->GetBullets()) {
+		colliders_.push_back(bullet);
 	}
 
 #pragma endregion
 
 #pragma region 自弾と敵キャラ
 
-	for (PlayerBullet* bullet : playerBullets) {
-		CheckCollisionPair(enemy_, bullet);
+	for (EnemyBullet* enemyBullet : enemy_->GetBullets()) {
+		colliders_.push_back(enemyBullet);
 	}
-
-#pragma endregion
-
-#pragma region 自弾と敵キャラ
-
-	for (PlayerBullet* Playerbullet : playerBullets) {
-
-		for (EnemyBullet* Enemybullet : enemyBullets) {
-			CheckCollisionPair(Playerbullet, Enemybullet);
+	std::list<Collider*>::iterator itrA = colliders_.begin();
+	for (; itrA != colliders_.end(); ++itrA) {
+		std::list<Collider*>::iterator itrB = itrA;
+		++itrB;
+		for (; itrB != colliders_.end(); ++itrB) {
+			CheckCollisionPair(*(itrA), *(itrB));
 		}
 	}
-
 #pragma endregion
 }
 
 void GameScene::CheckCollisionPair(Collider* colliderA, Collider* colliderB) {
+	if (!(colliderA->GetCOllisionAttribute() & colliderB->GetCollosionMask()) ||
+	    !(colliderB->GetCOllisionAttribute() & colliderA->GetCollosionMask())) {
+		return;
+	}
 	// 判定対象AとBの座標
 	Vector3 posA, posB;
 	posA = colliderA->GetWorldPosition();

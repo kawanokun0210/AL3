@@ -2,6 +2,7 @@
 #include "Model.h"
 #include "WorldTransform.h"
 #include "Collider.h"
+#include "CollisionConfig.h"
 
 class EnemyBullet : public Collider {
 

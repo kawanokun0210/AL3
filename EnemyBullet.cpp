@@ -16,6 +16,9 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 	// 引数で受け取った速度をメンバに代入
 	velocity_ = velocity;
 
+	SetCollisionAttribute(CollisionConfig::kCollisionAttributeEnemy);
+	SetCollisionMask(~CollisionConfig::kCollisionAttributeEnemy);
+
 }
 
 Vector3 EnemyBullet::GetWorldPosition() {

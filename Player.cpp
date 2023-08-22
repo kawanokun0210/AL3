@@ -39,6 +39,9 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 
 	input_ = Input::GetInstance();
 
+	SetCollisionAttribute(CollisionConfig::kCollisionAttributePlayer);
+	SetCollisionMask(~CollisionConfig::kCollisionAttributePlayer);
+
 };
 
 void Player::OnCollision() {

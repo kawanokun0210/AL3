@@ -16,6 +16,9 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vecto
 	//引数で受け取った速度をメンバに代入
 	velocity_ = velocity;
 
+	SetCollisionAttribute(CollisionConfig::kCollisionAttributePlayer);
+	SetCollisionMask(~CollisionConfig::kCollisionAttributePlayer);
+
 }
 
 Vector3 PlayerBullet::GetWorldPosition() {

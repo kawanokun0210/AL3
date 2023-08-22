@@ -9,7 +9,7 @@
 #include "PlayerBullet.h"
 #include <list>
 #include "Collider.h"
-
+#include "CollisionConfig.h"
 
 class Player : public Collider {
 public:
