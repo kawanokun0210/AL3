@@ -22,7 +22,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	AxisIndicator* axisIndicator = nullptr;
 	PrimitiveDrawer* primitiveDrawer = nullptr;
 	GameScene* gameScene = nullptr;
-	Game game = TITLE;
+	Game game = PLAY;
 
 	int playTimer = 0;
 
@@ -76,16 +76,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			break;
 		}
 		switch (game) {
-		case TITLE:
-			imguiManager->Begin();
-			input->Update();
-			playTimer = 0;
-			imguiManager->End();
-			if (input->PushKey(DIK_RETURN)) {
-				game = PLAY;
-			}
-			break;
-
+		
 		case PLAY:
 			// ImGui受付開始
 			imguiManager->Begin();
